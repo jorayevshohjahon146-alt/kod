@@ -1,53 +1,46 @@
 import re
+import json
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
+# PhishGuard Pro AI - Tahdidlarni aniqlash lug'atlari
 SUSPICIOUS_KEYWORDS = [
     'login', 'verify', 'bank', 'secure', 'free', 'update',
     'account', 'pay', 'bonus', 'prize', 'win', 'admin',
-    'karta', 'sms', 'uzcard', 'humo'
+    'karta', 'sms', 'uzcard', 'humo', 'click', 'payme'
 ]
-
 SUSPICIOUS_DOMAINS = ['.tk', '.ml', '.ga', '.cf', '.gq', '.xyz', '.top', '.club', '.ru']
 
 def analyze_url(url):
     score = 0
     reasons = []
-
     url_clean = url.strip()
-    
-    # URL formatini tozalash (Markdown yoki qavslar bo'lsa)
     url_clean = re.sub(r'^\[|\]\(.*\)$', '', url_clean)
     url_clean = re.sub(r'[\[\]\(\)]', '', url_clean)
 
     if not url_clean.startswith(('http://', 'https://')):
         url_clean = 'http://' + url_clean
 
-    # 1. IP manzil tekshiruvi
     if re.search(r'https?://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', url_clean):
         score += 35
         reasons.append("Domen o'rniga IP-manzildan foydalanilgan (juda shubhali).")
 
-    # 2. Kalit so'zlar tekshiruvi
     found_keywords = [word for word in SUSPICIOUS_KEYWORDS if word in url_clean.lower()]
     if found_keywords:
         score += len(found_keywords) * 15
         reasons.append(f"Shubhali kalit so'zlar aniqlandi: {', '.join(found_keywords)}")
 
-    # 3. Shubhali domen kengaytmasi
     for domain in SUSPICIOUS_DOMAINS:
         if domain in url_clean.lower():
             score += 25
             reasons.append(f"Xavfli/bepul domen zonasidan foydalanilgan ({domain}).")
             break
 
-    # 4. HTTPS yo'qligi
     if url_clean.startswith('http://'):
         score += 15
         reasons.append("Sayt xavfsiz HTTPS protokolidan foydalanmaydi (HTTP).")
 
-    # 5. Belgilar uzunligi va '@' belgisi
     if len(url_clean) > 60:
         score += 10
         reasons.append("URL manzil o'ta uzun (phishing havolalariga xos).")
@@ -57,14 +50,28 @@ def analyze_url(url):
         reasons.append("URL tarkibida shubhali '@' belgisi mavjud.")
 
     score = min(score, 100)
-    is_phishing = score >= 40
+    return {'url': url_clean, 'score': score, 'is_phishing': score >= 40, 'reasons': reasons}
 
-    return {
-        'url': url_clean,
-        'score': score,
-        'is_phishing': is_phishing,
-        'reasons': reasons
-    }
+def analyze_message(text):
+    score = 0
+    reasons = []
+    text_lower = text.lower()
+    
+    urgent_words = ['tezda', 'shoshiling', 'bloklanadi', 'yopiladi', '24 soat', 'xavf']
+    sensitive_words = ['sms', 'kod', 'karta', 'pasport', 'parol', 'pin']
+    
+    found_urgent = [w for w in urgent_words if w in text_lower]
+    found_sensitive = [w for w in sensitive_words if w in text_lower]
+
+    if found_urgent:
+        score += 40
+        reasons.append(f"Shoshiltirish va qo'rqitish belgilari: {', '.join(found_urgent)}")
+    if found_sensitive:
+        score += 45
+        reasons.append(f"Maxfiy ma'lumotlar so'rash belgisi: {', '.join(found_sensitive)}")
+        
+    score = min(score, 100)
+    return {'score': score, 'is_phishing': score >= 40, 'reasons': reasons}
 
 @app.route('/')
 def home():
@@ -74,11 +81,16 @@ def home():
 def check_api():
     try:
         data = request.get_json(force=True)
-        url = data.get('url', '')
-        if not url:
-            return jsonify({'error': 'URL kiritilmadi'}), 400
-        result = analyze_url(url)
-        return jsonify(result)
+        check_type = data.get('type', 'url')
+        
+        if check_type == 'message':
+            msg = data.get('message', '')
+            res = analyze_message(msg)
+        else:
+            url = data.get('url', '')
+            res = analyze_url(url)
+            
+        return jsonify(res)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
