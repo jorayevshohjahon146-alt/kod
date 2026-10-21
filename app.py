@@ -1,8 +1,22 @@
 import re
 import json
+import threading
+import os
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
+
+# --- BOTNI ORQA FONDA ISHGA TUSHIRISH (To'g'ri joyi) ---
+def run_bot():
+    try:
+        os.system("python bot.py")
+    except Exception as e:
+        print("Bot error:", e)
+
+# Render va Gunicorn uchun mos ravishda orqa fonda ishga tushirish
+if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+    threading.Thread(target=run_bot, daemon=True).start()
+# ------------------------------------------------------
 
 # PhishGuard Pro AI - Tahdidlarni aniqlash lug'atlari
 SUSPICIOUS_KEYWORDS = [
