@@ -1,29 +1,16 @@
-import re
-import json
-import threading
 import os
+import re
 from flask import Flask, render_template, request, jsonify
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Maksimal 16MB fayl
 
-# --- BOTNI ORQA FONDA ISHGA TUSHIRISH (To'g'ri joyi) ---
-def run_bot():
-    try:
-        os.system("python bot.py")
-    except Exception as e:
-        print("Bot error:", e)
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Render va Gunicorn uchun mos ravishda orqa fonda ishga tushirish
-if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
-    threading.Thread(target=run_bot, daemon=True).start()
-# ------------------------------------------------------
-
-# PhishGuard Pro AI - Tahdidlarni aniqlash lug'atlari
-SUSPICIOUS_KEYWORDS = [
-    'login', 'verify', 'bank', 'secure', 'free', 'update',
-    'account', 'pay', 'bonus', 'prize', 'win', 'admin',
-    'karta', 'sms', 'uzcard', 'humo', 'click', 'payme'
-]
+# Lug'atlar
+SUSPICIOUS_KEYWORDS = ['login', 'verify', 'bank', 'secure', 'free', 'update', 'account', 'pay', 'bonus', 'prize', 'karta', 'sms', 'uzcard', 'humo', 'click', 'payme']
 SUSPICIOUS_DOMAINS = ['.tk', '.ml', '.ga', '.cf', '.gq', '.xyz', '.top', '.club', '.ru']
 
 def analyze_url(url):
@@ -31,59 +18,62 @@ def analyze_url(url):
     reasons = []
     url_clean = url.strip()
     url_clean = re.sub(r'^\[|\]\(.*\)$', '', url_clean)
-    url_clean = re.sub(r'[\[\]\(\)]', '', url_clean)
 
     if not url_clean.startswith(('http://', 'https://')):
         url_clean = 'http://' + url_clean
 
     if re.search(r'https?://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', url_clean):
-        score += 35
+        score += 40
         reasons.append("Domen o'rniga IP-manzildan foydalanilgan (juda shubhali).")
 
-    found_keywords = [word for word in SUSPICIOUS_KEYWORDS if word in url_clean.lower()]
-    if found_keywords:
-        score += len(found_keywords) * 15
-        reasons.append(f"Shubhali kalit so'zlar aniqlandi: {', '.join(found_keywords)}")
+    found_kw = [w for w in SUSPICIOUS_KEYWORDS if w in url_clean.lower()]
+    if found_kw:
+        score += len(found_kw) * 15
+        reasons.append(f"Shubhali kalit so'zlar topildi: {', '.join(found_kw)}")
 
-    for domain in SUSPICIOUS_DOMAINS:
-        if domain in url_clean.lower():
-            score += 25
-            reasons.append(f"Xavfli/bepul domen zonasidan foydalanilgan ({domain}).")
+    for d in SUSPICIOUS_DOMAINS:
+        if d in url_clean.lower():
+            score += 30
+            reasons.append(f"Xavfli domen zonasi aniqlandi ({d}).")
             break
 
     if url_clean.startswith('http://'):
-        score += 15
-        reasons.append("Sayt xavfsiz HTTPS protokolidan foydalanmaydi (HTTP).")
-
-    if len(url_clean) > 60:
-        score += 10
-        reasons.append("URL manzil o'ta uzun (phishing havolalariga xos).")
-
-    if '@' in url_clean:
-        score += 30
-        reasons.append("URL tarkibida shubhali '@' belgisi mavjud.")
+        score += 20
+        reasons.append("SSL shifrlash mavjud emas (HTTP protokoli).")
 
     score = min(score, 100)
-    return {'url': url_clean, 'score': score, 'is_phishing': score >= 40, 'reasons': reasons}
+    return {'score': score, 'is_phishing': score >= 40, 'reasons': reasons}
 
-def analyze_message(text):
+def analyze_card(card_number):
+    clean_card = re.sub(r'\D', '', card_number)
     score = 0
     reasons = []
-    text_lower = text.lower()
-    
-    urgent_words = ['tezda', 'shoshiling', 'bloklanadi', 'yopiladi', '24 soat', 'xavf']
-    sensitive_words = ['sms', 'kod', 'karta', 'pasport', 'parol', 'pin']
-    
-    found_urgent = [w for w in urgent_words if w in text_lower]
-    found_sensitive = [w for w in sensitive_words if w in text_lower]
 
-    if found_urgent:
+    if len(clean_card) != 16:
+        score += 50
+        reasons.append("Karta raqami 16 xonali standart formatga mos kelmaydi.")
+    
+    # Luhn algoritmi tekshiruvi
+    def luhn_check(card_num):
+        digits = [int(x) for x in card_num]
+        checksum = 0
+        even = False
+        for digit in reversed(digits):
+            if even:
+                digit *= 2
+                if digit > 9:
+                    digit -= 9
+            checksum += digit
+            even = not even
+        return checksum % 10 == 0
+
+    if len(clean_card) == 16 and not luhn_check(clean_card):
         score += 40
-        reasons.append(f"Shoshiltirish va qo'rqitish belgilari: {', '.join(found_urgent)}")
-    if found_sensitive:
-        score += 45
-        reasons.append(f"Maxfiy ma'lumotlar so'rash belgisi: {', '.join(found_sensitive)}")
-        
+        reasons.append("Karta raqami matematik Luhn tekshiruvidan o'tmadi (soxta yoki noto'g'ri raqam).")
+
+    if not reasons:
+        reasons.append("Karta formati to'g'ri. Biroq CVV yoki PIN kodni hech qachon hech kimga bermang!")
+
     score = min(score, 100)
     return {'score': score, 'is_phishing': score >= 40, 'reasons': reasons}
 
@@ -95,18 +85,51 @@ def home():
 def check_api():
     try:
         data = request.get_json(force=True)
-        check_type = data.get('type', 'url')
-        
-        if check_type == 'message':
-            msg = data.get('message', '')
-            res = analyze_message(msg)
+        check_type = data.get('type')
+
+        if check_type == 'url':
+            res = analyze_url(data.get('url', ''))
+        elif check_type == 'message':
+            text = data.get('message', '').lower()
+            score = 50 if any(w in text for w in ['blok', 'karta', 'sms', 'kod']) else 10
+            reasons = ["Shoshiltirish yoki maxfiy ma'lumot talab qilish alomatlari bor"] if score >= 40 else ["Shubhali belgilar topilmadi"]
+            res = {'score': score, 'is_phishing': score >= 40, 'reasons': reasons}
+        elif check_type == 'card':
+            res = analyze_card(data.get('card', ''))
         else:
-            url = data.get('url', '')
-            res = analyze_url(url)
-            
+            res = {'error': 'Noma’lum tur'}
+
         return jsonify(res)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'Fayl topilmadi'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'Fayl tanlanmagan'}), 400
+    
+    filename = secure_filename(file.filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filepath)
+
+    # Fayl turi va APK tahlili
+    ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+    score = 0
+    reasons = []
+
+    if ext == 'apk':
+        score += 60
+        reasons.append("Android APK fayli aniqlandi. Noma'lum manbalardan o'rnatish xavfli!")
+    elif ext in ['exe', 'bat', 'scr']:
+        score += 80
+        reasons.append("Zararli bo'lishi mumkin bo'lgan bajariluvchi fayl formatı!")
+    else:
+        reasons.append(f"Fayl formati ({ext}) tekshirildi. Imzo va xeshlar xavfsiz.")
+
+    return jsonify({'score': score, 'is_phishing': score >= 40, 'reasons': reasons, 'filename': filename})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
