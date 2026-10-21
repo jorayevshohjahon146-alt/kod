@@ -3,349 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PhishGuard Global - Kiberxavfsizlik Ekotizimi</title>
-    <!-- Bootstrap 5 & FontAwesome -->
+    <title>PhishGuard Global Ekotizimi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-blue: #0f172a;
-            --accent-blue: #2563eb;
-            --bg-light: #f8fafc;
-        }
-        body {
-            background-color: var(--bg-light);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #1e293b;
-        }
-        .navbar-custom {
-            background-color: var(--primary-blue);
-        }
-        .nav-pills .nav-link {
-            color: #64748b;
-            font-weight: 600;
-            border-radius: 12px;
-            padding: 12px 20px;
-            transition: all 0.3s ease;
-        }
-        .nav-pills .nav-link.active {
-            background-color: var(--accent-blue);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-        .module-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-        }
-        .sos-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            font-weight: 700;
-            border: none;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
-        }
-        .sos-btn:hover { color: white; opacity: 0.9; }
-        .result-box {
-            display: none;
-            border-radius: 14px;
-            padding: 20px;
-            margin-top: 25px;
-        }
-        .badge-status {
-            font-size: 0.9rem;
-            padding: 6px 14px;
-            border-radius: 20px;
-        }
+        body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .module-card { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .result-box { display: none; margin-top: 20px; padding: 15px; border-radius: 10px; }
     </style>
 </head>
 <body>
-
-    <!-- Header / Navbar -->
-    <nav class="navbar navbar-dark navbar-custom py-3 shadow-sm">
+    <nav class="navbar navbar-dark bg-dark py-3">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="#">
-                <i class="fa-solid fa-shield-halved text-primary me-2 fs-3"></i>
-                PhishGuard <span class="badge bg-primary fs-6 ms-2">Global 2026</span>
-            </a>
-            <button class="btn sos-btn px-4 py-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#sosModal">
-                <i class="fa-solid fa-triangle-exclamation me-2"></i>SOS: Men aldandim
-            </button>
+            <a class="navbar-brand fw-bold" href="#"><i class="fa-solid fa-shield-halved text-primary me-2"></i>PhishGuard Pro AI Ekotizimi</a>
         </div>
     </nav>
 
-    <!-- Main Container -->
     <div class="container py-5">
-
-        <!-- Title Banner -->
-        <div class="text-center mb-5">
-            <h1 class="fw-bold display-6">Raqamli Tahdidlarga Qarshi Kompleks Himoya</h1>
-            <p class="text-muted fs-5">Bir ilova — barcha kiberxavflarni aniqlash, tushuntirish va himoyalash ekotizimi</p>
-        </div>
-
-        <!-- Modules Tabs -->
         <div class="row justify-content-center mb-4">
             <div class="col-lg-10">
-                <ul class="nav nav-pills nav-justified gap-2 bg-white p-2 rounded-4 border shadow-sm" id="moduleTabs">
-                    <li class="nav-item">
-                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-url">
-                            <i class="fa-solid fa-link me-2"></i>URL Scanner
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-msg">
-                            <i class="fa-solid fa-comment-dots me-2"></i>MessageGuard
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-card">
-                            <i class="fa-solid fa-credit-card me-2"></i>CardGuard
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-qr">
-                            <i class="fa-solid fa-qrcode me-2"></i>QR / FileGuard
-                        </button>
-                    </li>
+                <ul class="nav nav-pills nav-justified gap-2 bg-white p-2 rounded-4 border shadow-sm" id="pills-tab">
+                    <li class="nav-item"><button class="nav-link active fw-bold" data-bs-toggle="pill" data-bs-target="#tab-url">URL Scanner</button></li>
+                    <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="pill" data-bs-target="#tab-card">CardGuard</button></li>
+                    <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="pill" data-bs-target="#tab-file">File & APK Shield</button></li>
+                    <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="pill" data-bs-target="#tab-msg">MessageGuard</button></li>
                 </ul>
             </div>
         </div>
 
-        <!-- Tab Content Panels -->
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="tab-content">
-                    
-                    <!-- 1. URL Scanner Module -->
+                    <!-- URL Scanner -->
                     <div class="tab-pane fade show active" id="tab-url">
                         <div class="module-card">
-                            <h4 class="fw-bold mb-3"><i class="fa-solid fa-globe text-primary me-2"></i>URL Scanner — Fishing va Soxta Saytlar Tahlili</h4>
-                            <p class="text-muted">Domen xavfsizligi, shubhali belgilari va SSL protokollarini avtomatik tahlil qilish.</p>
-                            
-                            <form id="urlForm">
-                                <div class="input-group input-group-lg my-4">
-                                    <input type="text" id="urlInput" class="form-control" placeholder="Havolani kiriting (masalan: https://toshkent-bank.uz/login)" required autocomplete="off">
-                                    <button class="btn btn-primary px-4 fw-bold" type="submit" id="urlBtn">Tekshirish</button>
+                            <h4><i class="fa-solid fa-globe text-primary me-2"></i>URL va Domen Tahlili</h4>
+                            <form id="urlForm" class="mt-3">
+                                <div class="input-group input-group-lg">
+                                    <input type="text" id="urlInput" class="form-control" placeholder="https://example.com" required>
+                                    <button class="btn btn-primary px-4" type="submit">Tekshirish</button>
                                 </div>
                             </form>
-
-                            <div id="urlResult" class="result-box">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 id="urlTitle" class="fw-bold mb-0"></h5>
-                                    <span id="urlBadge" class="badge badge-status"></span>
-                                </div>
-                                <div class="progress my-3" style="height: 12px;">
-                                    <div id="urlProgress" class="progress-bar" style="width: 0%;"></div>
-                                </div>
-                                <p id="urlScore" class="fw-bold"></p>
-                                <ul id="urlReasons" class="mb-0"></ul>
-                            </div>
+                            <div id="urlResult" class="result-box"></div>
                         </div>
                     </div>
 
-                    <!-- 2. MessageGuard Module -->
-                    <div class="tab-pane fade" id="tab-msg">
-                        <div class="module-card">
-                            <h4 class="fw-bold mb-3"><i class="fa-solid fa-envelope-open-text text-primary me-2"></i>MessageGuard — SMS va Xabarlar Tahlili</h4>
-                            <p class="text-muted">SMS, Telegram yoki Email xabarlaridagi shoshiltirish va firibgarlik iboralarini aniqlash.</p>
-                            
-                            <form id="msgForm">
-                                <div class="mb-3">
-                                    <textarea id="msgInput" class="form-control" rows="4" placeholder="Kelgan shubhali SMS yoki xabar matnini shu yerga nusxalab joylang..." required></textarea>
-                                </div>
-                                <button class="btn btn-primary btn-lg w-100 fw-bold" type="submit" id="msgBtn">Xabarni Tahlil Qilish</button>
-                            </form>
-
-                            <div id="msgResult" class="result-box">
-                                <h5 id="msgTitle" class="fw-bold"></h5>
-                                <p id="msgScore" class="fw-bold"></p>
-                                <ul id="msgReasons"></ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 3. CardGuard Module -->
+                    <!-- CardGuard -->
                     <div class="tab-pane fade" id="tab-card">
                         <div class="module-card">
-                            <h4 class="fw-bold mb-3"><i class="fa-solid fa-shield-cat text-primary me-2"></i>CardGuard — Karta va To'lov Xavfsizligi</h4>
-                            <p class="text-muted">Bank kartalari va online tranzaksiyalar firibgarligidan himoya yo'riqnomasi va tekshiruvi.</p>
-                            
-                            <div class="row g-3 my-2">
-                                <div class="col-md-6">
-                                    <div class="p-3 border rounded-3 bg-light">
-                                        <h6><i class="fa-solid fa-lock text-success me-2"></i>Rasmiy Integratsiyalar</h6>
-                                        <small class="text-muted">PIN-kod, CVV hamda SMS kodi hech qachon saqlanmaydi va so'ralmaydi.</small>
-                                    </div>
+                            <h4><i class="fa-solid fa-credit-card text-primary me-2"></i>CardGuard — Karta Xavfsizligi</h4>
+                            <form id="cardForm" class="mt-3">
+                                <div class="input-group input-group-lg">
+                                    <input type="text" id="cardInput" class="form-control" placeholder="16 xonali karta raqamini kiriting" maxlength="19" required>
+                                    <button class="btn btn-primary px-4" type="submit">Validatsiya</button>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="p-3 border rounded-3 bg-light">
-                                        <h6><i class="fa-solid fa-building-columns text-primary me-2"></i>To'lov Sahifasi Auditi</h6>
-                                        <small class="text-muted">Karta kiritayotgan to'lov sahifangiz soxtalikka tekshiriladi.</small>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
+                            <div id="cardResult" class="result-box"></div>
                         </div>
                     </div>
 
-                    <!-- 4. QR & FileGuard Module -->
-                    <div class="tab-pane fade" id="tab-qr">
+                    <!-- File & APK Guard -->
+                    <div class="tab-pane fade" id="tab-file">
                         <div class="module-card">
-                            <h4 class="fw-bold mb-3"><i class="fa-solid fa-file-shield text-primary me-2"></i>QR Guard & FileGuard</h4>
-                            <p class="text-muted">QR-kodlar va shubhali Android APK / fayllarni statik va xesh-tahlil qilish.</p>
-                            
-                            <div class="border-2 border-dashed rounded-4 p-5 text-center bg-light">
-                                <i class="fa-solid fa-cloud-arrow-up fs-1 text-primary mb-3"></i>
-                                <h5>Faylni tahlil qilish uchun yuklang (APK, PDF, DOCX)</h5>
-                                <p class="text-muted small">Maxfiylik va mas'uliyatli tahlil kafolatlanadi</p>
-                                <input type="file" id="fileInput" class="d-none">
-                                <button class="btn btn-outline-primary rounded-pill px-4" onclick="document.getElementById('fileInput').click()">Faylni Tanlash</button>
-                            </div>
+                            <h4><i class="fa-solid fa-file-shield text-primary me-2"></i>FileGuard & APK Shield</h4>
+                            <form id="fileForm" class="mt-3">
+                                <div class="input-group input-group-lg">
+                                    <input type="file" id="fileInput" class="form-control" required>
+                                    <button class="btn btn-primary px-4" type="submit">Yuklab Tahlil Qilish</button>
+                                </div>
+                            </form>
+                            <div id="fileResult" class="result-box"></div>
                         </div>
                     </div>
 
+                    <!-- MessageGuard -->
+                    <div class="tab-pane fade" id="tab-msg">
+                        <div class="module-card">
+                            <h4><i class="fa-solid fa-comment-dots text-primary me-2"></i>MessageGuard — SMS Tahlili</h4>
+                            <form id="msgForm" class="mt-3">
+                                <textarea id="msgInput" class="form-control mb-3" rows="3" placeholder="Shubhali xabar matnini kiriting..." required></textarea>
+                                <button class="btn btn-primary w-100 py-2 fw-bold" type="submit">Tahlil Qilish</button>
+                            </form>
+                            <div id="msgResult" class="result-box"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SOS Modal Dialog (Taqdimotingizdagi 06-Slayd asosida) -->
-    <div class="modal fade" id="sosModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0">
-                <div class="modal-header bg-danger text-white rounded-top-4">
-                    <h5 class="modal-header-title fw-bold"><i class="fa-solid fa-triangle-exclamation me-2"></i>SOS: Tezkor Harakat Yo'riqnomasi</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <ol class="list-group list-group-numbered list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                            <div class="ms-2 me-auto">
-                                <div class="fw-bold">Bank Kartasini Bloklang</div>
-                                Bankning rasmiy ilovasi yoki call-markaziga qo'ng'iroq qilib kartani muzlatib qo'ying.
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                            <div class="ms-2 me-auto">
-                                <div class="fw-bold">Parollarni Yangilang</div>
-                                Xavfsiz toza qurilmadan foydalanib barcha hisoblaringiz parolini almashtiring.
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                            <div class="ms-2 me-auto">
-                                <div class="fw-bold">Dalillarni Saqlab Qoling</div>
-                                Xabarlar, havolalar, skrinshot va tranzaksiya vaqtini saqlang.
-                            </div>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JS Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // URL Scanner Handler
-        document.getElementById('urlForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const url = document.getElementById('urlInput').value.trim();
-            const resBox = document.getElementById('urlResult');
-            const btn = document.getElementById('urlBtn');
-
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Tekshirilmoqda...';
+        async function handleCheck(endpoint, payload, resultDivId) {
+            const resBox = document.getElementById(resultDivId);
+            resBox.style.display = 'block';
+            resBox.className = 'result-box alert alert-info';
+            resBox.innerHTML = 'Tahlil qilinmoqda...';
 
             try {
-                const response = await fetch('/api/check', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'url', url: url })
-                });
+                const response = await endpoint(payload);
                 const data = await response.json();
-
-                resBox.style.display = 'block';
-                const reasonsList = document.getElementById('urlReasons');
-                reasonsList.innerHTML = '';
-
-                const score = data.score || 0;
-                document.getElementById('urlScore').textContent = 'Xavf darajasi: ' + score + ' / 100';
-                document.getElementById('urlProgress').style.width = score + '%';
-
-                if (data.is_phishing) {
+                
+                if (data.is_phishing || data.score >= 40) {
                     resBox.className = 'result-box alert alert-danger';
-                    document.getElementById('urlTitle').textContent = '⚠️ DIQQAT: Fishing Havfi Aniqlandi!';
-                    document.getElementById('urlBadge').textContent = 'XAVFLI';
-                    document.getElementById('urlBadge').className = 'badge bg-danger badge-status';
-                    document.getElementById('urlProgress').className = 'progress-bar bg-danger';
+                    resBox.innerHTML = `<h5>⚠️ Xavf Aniqlandi! (Ball: ${data.score}/100)</h5><ul>` + data.reasons.map(r => `<li>${r}</li>`).join('') + `</ul>`;
                 } else {
                     resBox.className = 'result-box alert alert-success';
-                    document.getElementById('urlTitle').textContent = '✅ Havola Xavfsiz Ko\'rinmoqda';
-                    document.getElementById('urlBadge').textContent = 'XAVFSIZ';
-                    document.getElementById('urlBadge').className = 'badge bg-success badge-status';
-                    document.getElementById('urlProgress').className = 'progress-bar bg-success';
-                }
-
-                if (data.reasons && data.reasons.length > 0) {
-                    data.reasons.forEach(r => {
-                        const li = document.createElement('li');
-                        li.textContent = r;
-                        reasonsList.appendChild(li);
-                    });
-                } else {
-                    reasonsList.innerHTML = '<li>Shubhali belgilar aniqlanmadi.</li>';
+                    resBox.innerHTML = `<h5>✅ Xavfsiz (Ball: ${data.score}/100)</h5><ul>` + data.reasons.map(r => `<li>${r}</li>`).join('') + `</ul>`;
                 }
             } catch (err) {
-                alert('Serverda xatolik yuz berdi!');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Tekshirish';
+                resBox.className = 'result-box alert alert-warning';
+                resBox.innerHTML = 'Xatolik yuz berdi.';
             }
+        }
+
+        document.getElementById('urlForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleCheck(p => fetch('/api/check', {method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type: 'url', url: p})}), document.getElementById('urlInput').value, 'urlResult');
         });
 
-        // MessageGuard Handler
-        document.getElementById('msgForm').addEventListener('submit', async function(e) {
+        document.getElementById('cardForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const msg = document.getElementById('msgInput').value.trim();
-            const resBox = document.getElementById('msgResult');
-            const btn = document.getElementById('msgBtn');
+            handleCheck(p => fetch('/api/check', {method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type: 'card', card: p})}), document.getElementById('cardInput').value, 'cardResult');
+        });
 
-            btn.disabled = true;
+        document.getElementById('msgForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleCheck(p => fetch('/api/check', {method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type: 'message', message: p})}), document.getElementById('msgInput').value, 'msgResult');
+        });
+
+        document.getElementById('fileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileInput').files[0];
+            const formData = new FormData();
+            formData.append('file', fileInput);
+
+            const resBox = document.getElementById('fileResult');
+            resBox.style.display = 'block';
+            resBox.className = 'result-box alert alert-info';
+            resBox.innerHTML = 'Fayl yuklanib tahlil qilinmoqda...';
 
             try {
-                const response = await fetch('/api/check', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'message', message: msg })
-                });
+                const response = await fetch('/api/upload', { method: 'POST', body: formData });
                 const data = await response.json();
-
-                resBox.style.display = 'block';
-                const list = document.getElementById('msgReasons');
-                list.innerHTML = '';
-
-                document.getElementById('msgScore').textContent = 'Firibgarlik Ehtimoli: ' + data.score + ' / 100';
-
-                if (data.is_phishing) {
+                if (data.score >= 40) {
                     resBox.className = 'result-box alert alert-danger';
-                    document.getElementById('msgTitle').textContent = '⚠️ DIQQAT: Xabarda Firibgarlik Belgilari Bor!';
+                    resBox.innerHTML = `<h5>⚠️ Xavfli Fayl (${data.filename})</h5><ul>` + data.reasons.map(r => `<li>${r}</li>`).join('') + `</ul>`;
                 } else {
                     resBox.className = 'result-box alert alert-success';
-                    document.getElementById('msgTitle').textContent = '✅ Xabarda Shubhali Elementlar Topilmadi';
-                }
-
-                if (data.reasons && data.reasons.length > 0) {
-                    data.reasons.forEach(r => {
-                        const li = document.createElement('li');
-                        li.textContent = r;
-                        list.appendChild(li);
-                    });
+                    resBox.innerHTML = `<h5>✅ Fayl Xavfsiz (${data.filename})</h5><ul>` + data.reasons.map(r => `<li>${r}</li>`).join('') + `</ul>`;
                 }
             } catch (err) {
-                alert('Tahlilda xatolik yuz berdi!');
-            } finally {
-                btn.disabled = false;
+                resBox.className = 'result-box alert alert-warning';
+                resBox.innerHTML = 'Faylni yuklashda xatolik.';
             }
         });
     </script>
