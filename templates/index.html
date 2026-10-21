@@ -3,274 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PhishGuard Pro AI - Phishing Detection System</title>
+    <title>PhishGuard Pro AI - Phishing Detection</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #0d6efd;
-            --bg-color: #f4f6f9;
-        }
         body {
-            background-color: var(--bg-color);
+            background-color: #f0f2f5;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
+            padding-top: 50px;
         }
-        .navbar-brand {
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .card-custom {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        .main-card {
             background: #ffffff;
-            transition: all 0.3s ease;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            padding: 35px;
         }
-        .search-box {
-            position: relative;
-        }
-        .search-input {
-            height: 60px;
-            border-radius: 30px;
-            padding-left: 25px;
-            padding-right: 140px;
-            font-size: 1.1rem;
-            border: 2px solid #e2e8f0;
-        }
-        .search-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-        }
-        .btn-check-url {
-            position: absolute;
-            right: 6px;
-            top: 6px;
-            height: 48px;
-            border-radius: 24px;
-            padding: 0 25px;
-            font-weight: 600;
-        }
-        .result-card {
+        .result-box {
             display: none;
-            margin-top: 30px;
-        }
-        .risk-badge {
-            font-size: 1.2rem;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-        .feature-icon {
-            width: 48px;
-            height: 48px;
+            margin-top: 25px;
+            padding: 20px;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Navbarchat Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary py-3">
-        <div class="container">
-            <a class="navbar-brand fs-4" href="#"><i class="fa-solid => fa-shield-halved me-2"></i>PhishGuard Pro AI</a>
-            <span class="navbar-text text-white-50 d-none d-md-inline">Cybersecurity Threat Analysis Platform</span>
-        </div>
-    </nav>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 main-card">
+            <h2 class="text-center text-primary mb-3">🛡️ PhishGuard Pro AI</h2>
+            <p class="text-center text-muted mb-4">Phishing va firibgarlik havolalarini tekshirish tizimi</p>
 
-    <div class="container py-5">
-        <!-- Main Search Header -->
-        <div class="row justify-content-center text-center mb-4">
-            <div class="col-lg-8">
-                <h1 class="fw-bold mb-3">Veb-sayt Phishing va Havf Tahlili</h1>
-                <p class="text-muted fs-5">Sun'iy intellekt va kiberxavfsizlik algoritmlari yordamida har qanday shubhali havolani bir zumda tekshiring.</p>
-            </div>
-        </div>
-
-        <!-- Input Box -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card card-custom p-4 mb-4">
-                    <form id="urlForm">
-                        <div class="search-box">
-                            <input type="text" id="urlInput" class="form-control search-input" placeholder="Masalan: https://example.com" required autocomplete="off">
-                            <button class="btn btn-primary btn-check-url" type="submit" id="btnSubmit">
-                                <i class="fa-solid fa-magnifying-glass me-1"></i> Tekshirish
-                            </button>
-                        </div>
-                    </form>
+            <form id="checkForm">
+                <div class="input-group input-group-lg mb-3">
+                    <input type="text" id="urlInput" class="form-control" placeholder="Masalan: https://google.com" required autocomplete="off">
+                    <button class="btn btn-primary px-4" type="submit" id="submitBtn">Tekshirish</button>
                 </div>
-            </div>
-        </div>
+            </form>
 
-        <!-- Result Section -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div id="resultCard" class="card card-custom p-4 result-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0 fw-bold" id="resStatusTitle">Tahlil Natijasi</h4>
-                        <span id="riskBadge" class="badge bg-secondary risk-badge">---</span>
-                    </div>
-                    
-                    <hr>
-
-                    <!-- Risk Meter Progress Bar -->
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span class="fw-semibold">Xavf Darajasi (Risk Score):</span>
-                            <span class="fw-bold" id="scoreText">0 / 100</span>
-                        </div>
-                        <div class="progress" style="height: 14px; border-radius: 7px;">
-                            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
-                        </div>
-                    </div>
-
-                    <!-- Reasons / Details -->
-                    <h5 class="fw-semibold mb-3"><i class="fa-solid fa-triangle-exclamation text-warning me-2"></i>Aniqlangan Shubhali Belgilar:</h5>
-                    <ul class="list-group list-group-flush mb-4" id="reasonsContainer">
-                        <!-- Dynamic Reasons List -->
-                    </ul>
-
-                    <!-- Recommendation -->
-                    <div id="recommendationBox" class="alert alert-info border-0 rounded-3 mb-0">
-                        <!-- Dynamic Recommendation -->
-                    </div>
+            <div id="resultBox" class="result-box">
+                <h4 id="resultTitle" class="fw-bold"></h4>
+                <div class="progress my-3" style="height: 20px;">
+                    <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Features Info Cards -->
-        <div class="row justify-content-center mt-5 g-4">
-            <div class="col-md-4">
-                <div class="card card-custom p-4 h-100">
-                    <div class="feature-icon bg-primary text-white">
-                        <i class="fa-solid fa-brain"></i>
-                    </div>
-                    <h5 class="fw-bold">AI Algoritm</h5>
-                    <p class="text-muted mb-0">URL strukturasi, domen yoshi va kalit so'zlarni aqlli tahlil qilish.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-custom p-4 h-100">
-                    <div class="feature-icon bg-danger text-white">
-                        <i class="fa-solid fa-bug"></i>
-                    </div>
-                    <h5 class="fw-bold">Phishing Himoyasi</h5>
-                    <p class="text-muted mb-0">Bank va ijtimoiy tarmoqlar soxta nusxalarini bir zumda aniqlash.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-custom p-4 h-100">
-                    <div class="feature-icon bg-success text-white">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                    <h5 class="fw-bold">SSL & Domain Tahlili</h5>
-                    <p class="text-muted mb-0">Protokol xavfsizligi va domendagi shubhali belgilarni tekshirish.</p>
-                </div>
+                <p id="resultScore" class="fw-bold fs-5"></p>
+                <h6 class="fw-bold mt-3">Aniqlangan shubhali belgilar:</h6>
+                <ul id="reasonsList" class="mb-0"></ul>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.getElementById('urlForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            let rawUrl = document.getElementById('urlInput').value.trim();
-            
-            // Auto format URL if user copies markdown or bad link
-            rawUrl = rawUrl.replace(/^\[\vert{}\]\(.*\)$/g, '');
+<script>
+    document.getElementById('checkForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-            const btnSubmit = document.getElementById('btnSubmit');
-            const resultCard = document.getElementById('resultCard');
-            const resStatusTitle = document.getElementById('resStatusTitle');
-            const riskBadge = document.getElementById('riskBadge');
-            const scoreText = document.getElementById('scoreText');
-            const progressBar = document.getElementById('progressBar');
-            const reasonsContainer = document.getElementById('reasonsContainer');
-            const recommendationBox = document.getElementById('recommendationBox');
+        const inputField = document.getElementById('urlInput');
+        let url = inputField.value.trim();
 
-            // Loading State
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Tekshirilmoqda...';
+        const submitBtn = document.getElementById('submitBtn');
+        const resultBox = document.getElementById('resultBox');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultScore = document.getElementById('resultScore');
+        const progressBar = document.getElementById('progressBar');
+        const reasonsList = document.getElementById('reasonsList');
 
-            try {
-                // Sending request to Flask backend
-                const response = await fetch('/analyze', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: rawUrl })
-                });
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Tekshirilmoqda...';
 
-                // Fallback for /api/check if /analyze is not used
-                let data;
-                if (!response.ok) {
-                    const fallbackResp = await fetch('/api/check', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: rawUrl })
-                    });
-                    data = await fallbackResp.json();
-                } else {
-                    data = await response.json();
-                }
+        try {
+            const response = await fetch('/api/check', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: url })
+            });
 
-                resultCard.style.display = 'block';
-                reasonsContainer.innerHTML = '';
+            const data = await response.json();
 
-                const score = data.score || 0;
-                const isPhishing = data.is_phishing || (score >= 40);
-                const reasons = data.reasons || data.details || [];
+            resultBox.style.display = 'block';
+            reasonsList.innerHTML = '';
 
-                scoreText.textContent = `${score} / 100`;
-                progressBar.style.width = `${score}%`;
+            if (data.error) {
+                resultBox.className = 'result-box alert alert-warning';
+                resultTitle.textContent = '⚠️ Xatolik: ' + data.error;
+                resultScore.textContent = '';
+                progressBar.style.width = '0%';
+            } else {
+                const score = data.score;
+                progressBar.style.width = score + '%';
+                resultScore.textContent = 'Xavf darajasi: ' + score + ' / 100';
 
-                if (isPhishing) {
-                    resStatusTitle.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>DIQQAT: Phishing Ehtimoli Yuqori!';
-                    riskBadge.className = 'badge bg-danger risk-badge';
-                    riskBadge.textContent = 'XAVFLI';
+                if (data.is_phishing) {
+                    resultBox.className = 'result-box alert alert-danger';
+                    resultTitle.textContent = '⚠️ DIQQAT: Phishing bo\'lishi mumkin!';
                     progressBar.className = 'progress-bar bg-danger';
-                    recommendationsText = '<strong>Tavsiya:</strong> Ushbu sahifaga shaxsiy ma'lumotlaringizni, parollarni yoki bank karta raqamlarini UMUMAN kiritmang!';
                 } else {
-                    resStatusTitle.innerHTML = '<i class="fa-solid fa-circle-check text-success me-2"></i>Havola Xavfsiz Ko\'rinadi';
-                    riskBadge.className = 'badge bg-success risk-badge';
-                    riskBadge.textContent = 'XAVFSIZ';
+                    resultBox.className = 'result-box alert alert-success';
+                    resultTitle.textContent = '✅ Havola xavfsiz ko\'rinmoqda!';
                     progressBar.className = 'progress-bar bg-success';
-                    recommendationsText = '<strong>Tavsiya:</strong> Havolada yaqqol shubhali phishing belgilari aniqlanmadi.';
                 }
 
-                recommendationBox.innerHTML = recommendationsText;
-
-                if (reasons.length > 0) {
-                    reasons.forEach(reason => {
+                if (data.reasons && data.reasons.length > 0) {
+                    data.reasons.forEach(reason => {
                         const li = document.createElement('li');
-                        li.className = 'list-group-item d-flex align-items-center text-danger px-0 bg-transparent';
-                        li.innerHTML = `<i class="fa-solid fa-circle-xmark me-2"></i> ${reason}`;
-                        reasonsContainer.appendChild(li);
+                        li.textContent = reason;
+                        reasonsList.appendChild(li);
                     });
                 } else {
-                    reasonsContainer.innerHTML = '<li class="list-group-item text-success px-0 bg-transparent"><i class="fa-solid fa-circle-check me-2"></i> Shubhali kalit so\'zlar yoki xavfli domen kengaytmalari topilmadi.</li>';
+                    reasonsList.innerHTML = '<li>Shubhali belgilar aniqlanmadi.</li>';
                 }
-
-            } catch (err) {
-                resultCard.style.display = 'block';
-                resStatusTitle.innerHTML = '<i class="fa-solid fa-circle-exclamation text-warning me-2"></i>Tekshiruvda Xatolik';
-                riskBadge.className = 'badge bg-warning text-dark risk-badge';
-                riskBadge.textContent = 'XATO';
-                scoreText.textContent = 'N/A';
-                progressBar.style.width = '100%';
-                progressBar.className = 'progress-bar bg-warning';
-                reasonsContainer.innerHTML = '<li class="list-group-item text-muted px-0 bg-transparent">Server bilan aloqa o\'rnatishda xatolik yuz berdi. Manzilni to\'g'ri kiriting.</li>';
-                recommendationBox.innerHTML = 'Faqat toza URL manzilini kiriting (masalan: <code>https://google.com</code>).';
-            } finally {
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = '<i class="fa-solid fa-magnifying-glass me-1"></i> Tekshirish';
             }
-        });
-    </script>
+        } catch (error) {
+            resultBox.style.display = 'block';
+            resultBox.className = 'result-box alert alert-danger';
+            resultTitle.textContent = 'Server bilan aloqa o\'rnatishda xatolik yuz berdi!';
+            resultScore.textContent = '';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Tekshirish';
+        }
+    });
+</script>
+
 </body>
 </html>
